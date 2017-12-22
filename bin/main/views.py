@@ -33,12 +33,12 @@ def post_message():
         update_time=now,
     )
 
-    if mes_type == MesDef.MESS_TYPE_COMMON:
-
-
     current_app.dbsess.add(message)
     current_app.dbsess.commit()
 
     return output()
 
-
+@main.route('/ping', methods=['GET'])
+def get_ping():
+    '''ping'''
+    return output()
