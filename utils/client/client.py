@@ -15,8 +15,9 @@ class config:
         'url': 'http://127.0.0.1:5000/message'
     }
     server = {
-        'host': '127.0.0.1',
-        'port': '9181',
+        'host': '116.196.113.214',
+        'port': '8080',
+        'url': 'http://116.196.113.214:8080/message',
     }
     env = {
         'test': test,
@@ -31,7 +32,7 @@ def upload(content, type):
         'content': content,
         'type': type,
     }
-    post(config.env['test'].get('url'), data=data)
+    post(config.env['server'].get('url'), data=data)
 
 if __name__ == '__main__':
     upload()
