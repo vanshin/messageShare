@@ -18,7 +18,7 @@ def post_message():
 
     d = request.values
     content = d.get('content', '')
-    mes_type = d.get('type', MesDef.TYPE_COMMON)
+    mes_type = d.get('type', MesDef.MESS_TYPE_TEXT)
     own_user = '9181'
 
     now = datetime.datetime.now()
