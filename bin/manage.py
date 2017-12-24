@@ -5,13 +5,13 @@ import os
 HOME = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(os.path.dirname(HOME), 'conf'))
 sys.path.append(os.path.join(os.path.dirname(HOME), 'model'))
+sys.path.append(os.path.dirname(HOME))
 
 import click
 import sqlalchemy
 
 from flask import current_app
 from sqlalchemy.orm import sessionmaker
-
 from bin import create_app
 from config import dbconf
 
