@@ -2,6 +2,8 @@
 
 DATABASE_ENGINE = '{}://{}@{}:{}'
 
+DATETIME_FMT = '%Y-%m-%d %H:%M:%S'
+
 class MesDef:
 
     # 消息类型
@@ -12,3 +14,5 @@ class MesDef:
     MESS_TYPE_FILE_PDF = 2100 # 文件pdf
 
     MESS_TYPE_MUTILMEDIA = 3000 # 多媒体
+
+
