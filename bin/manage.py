@@ -5,6 +5,7 @@ import os
 HOME = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.join(os.path.dirname(HOME), 'conf'))
 sys.path.append(os.path.join(os.path.dirname(HOME), 'model'))
+sys.path.append(os.path.join(os.path.dirname(HOME), 'altools'))
 sys.path.append(os.path.dirname(HOME))
 
 import click

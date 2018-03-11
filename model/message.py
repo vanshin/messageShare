@@ -21,5 +21,7 @@ class Message(Base):
     status = Column(Integer)
     create_time = Column(DateTime)
     update_time = Column(DateTime)
+    descr = Column(UnicodeText)
+    attr = Column(UnicodeText)
 
 
