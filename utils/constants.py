@@ -16,3 +16,10 @@ class MesDef:
     MESS_TYPE_MUTILMEDIA = 3000 # 多媒体
 
 
+class UserConst(object):
+
+    # user status
+    INIT = 0
+    LOGGED = 2
+    EXIST = 1 #存在未登录
+    NULL = -1

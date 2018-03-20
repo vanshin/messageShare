@@ -29,11 +29,12 @@ def post_login():
     password = d.get('password')
 
 
-    hc = httpClient(config.USER_API)
-    ret = hc.get('login', {'usename': username, 'password': password})
+    hc = HttpClient(config.USER_API)
+    ret = hc.post('login', {'username': username, 'password': password})
+    log.info('ret={}'.format(ret))
     if not ret or ret['code'] != '0000':
         raise UserExcp('登录失败')
-    return output(ret['data'])
+    return output(data=ret['data'])
 
 @user.route('/regi', methods=['POST'])
 def post_regi():
@@ -43,4 +44,4 @@ def post_regi():
     log.debug(ret)
     if not ret or ret['code'] != '0000':
         raise UserExcp('注册失败')
-    return output(ret['data'])
+    return output(data=ret['data'])

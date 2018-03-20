@@ -3,28 +3,35 @@
 '''main'''
 
 import os
+import logging
 import datetime
+logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger()
 
 from altools.base.output import output
 
-from flask import request, current_app
+from flask import request, current_app, session
 from sqlalchemy.orm import sessionmaker
 from utils.constants import MesDef
+from utils.deco import check_login
 from model.message import Message
 from . import main
 
 @main.route('/message', methods=['POST'])
+@check_login()
 def post_message():
     '''添加一个消息'''
 
     d = request.values
     content = d.get('content', '')
     mes_type = d.get('type', MesDef.MESS_TYPE_TEXT)
-    own_user = '9181'
     descr = d.get('descr', '')
     attr = d.get('attr', '')
-
     now = datetime.datetime.now()
+    log.info(session.get('userid'))
+
+    own_user = session.get('userid')
+
 
     # insert
     message = Message(
@@ -43,6 +50,7 @@ def post_message():
 
     return output()
 
+@check_login()
 @main.route('/message', methods=['GET'])
 def get_message():
     '''获取消息'''
