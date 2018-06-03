@@ -4,11 +4,13 @@
 
 import os
 import logging
+import json
 import datetime
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 
 from altools.base.output import output
+from altools.base.error import ParamExcp
 
 from flask import request, current_app, session
 from sqlalchemy.orm import sessionmaker
@@ -32,6 +34,12 @@ def post_message():
 
     own_user = session.get('userid')
 
+    log.info('attr={}'.format(attr))
+
+    try:
+        attr = json.loads(attr)
+    except:
+        attr = ''
 
     # insert
     message = Message(
@@ -56,15 +64,46 @@ def get_message():
     '''获取消息'''
     d = request.values
     mes_type = d.get('type', 1)
-    limit = d.get('limit', 10)
+    length= d.get('length', 10)
+    start = d.get('start', 1)
+    attr = d.get('attr')
+
+    try:
+        if attr:
+            attr = json.loads(attr)
+    except:
+        attr = {}
+
+    if start < 1:
+        raise ParamExcp('start page must gt 1')
+    start = start - 1
+
+    offset = start * length
+
+    kw = {}
+    kw['type'] = mes_type
 
     ret = {'messages': []}
-    mes = current_app.dbsess.query(Message).order_by(Message.update_time)[0:10]
+    mes_query = (current_app
+            .dbsess.query(Message)
+            .filter_by(**kw))
+
+    for k,v in attr.items():
+        mes_query = mes_query.filter(Message.attr[k]==v)
+
+    mes = (mes_query
+        .order_by(Message.update_time.desc())
+        .limit(length)
+        .offset(offset))
+
     for m in mes:
+        log.info('time={}'.format(m.create_time))
         tmp = {}
         tmp['content'] = m.content
         tmp['type'] = m.type
         tmp['attr'] = m.attr
+        tmp['create_time'] = str(m.create_time)
+        tmp['update_time'] = str(m.update_time)
         ret['messages'].append(tmp)
     return output(data=ret)
 

@@ -5,7 +5,7 @@ import os
 import datetime
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, UnicodeText, DateTime
+from sqlalchemy import Column, Integer, String, UnicodeText, DateTime, JSON
 
 Base = declarative_base()
 
@@ -22,6 +22,6 @@ class Message(Base):
     create_time = Column(DateTime)
     update_time = Column(DateTime)
     descr = Column(UnicodeText)
-    attr = Column(UnicodeText)
+    attr = Column(JSON)
 
 
