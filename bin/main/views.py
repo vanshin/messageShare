@@ -6,11 +6,14 @@ import os
 import logging
 import json
 import datetime
-logging.basicConfig(level=logging.DEBUG)
+import hashids
+import config
+logging.basicConfig(filename=config.LOG_FILE, level=logging.DEBUG)
 log = logging.getLogger()
 
 from altools.base.output import output
 from altools.base.error import ParamExcp
+from altools.utils.tools import encode_id, decode_id
 
 from flask import request, current_app, session
 from sqlalchemy.orm import sessionmaker
@@ -58,8 +61,8 @@ def post_message():
 
     return output()
 
-@check_login()
 @main.route('/message', methods=['GET'])
+@check_login()
 def get_message():
     '''获取消息'''
     d = request.values
@@ -67,6 +70,9 @@ def get_message():
     length= d.get('length', 10)
     start = d.get('start', 1)
     attr = d.get('attr')
+
+    userid = session.get('userid')
+    log.debug('userid={}'.format(userid))
 
     try:
         if attr:
@@ -82,6 +88,7 @@ def get_message():
 
     kw = {}
     kw['type'] = mes_type
+    kw['own_user'] = userid
 
     ret = {'messages': []}
     mes_query = (current_app
@@ -104,9 +111,35 @@ def get_message():
         tmp['attr'] = m.attr
         tmp['create_time'] = str(m.create_time)
         tmp['update_time'] = str(m.update_time)
+        tmp['descr'] = m.descr
+        tmp['id'] = encode_id(m.id)
+        tmp['status'] = m.status
         ret['messages'].append(tmp)
     return output(data=ret)
 
+@main.route('/message', methods=['PUT'])
+@check_login()
+def put_message():
+    '''更新一个消息'''
+    d = request.values
+    mess_id = d.get('mid')
+    if not mess_id:
+        raise ParamExcp('缺乏messid')
+    userid = session.get('userid')
+
+    values = {'update_time': str(datetime.datetime.now())}
+    for i in ['content', 'attr', 'type', 'status', 'descr']:
+        value = d.get(i)
+        if i == 'attr':
+            value = json.loads(value)
+        if value:
+            values[i] = value
+
+    mess_id = decode_id(mess_id)
+    (current_app.dbsess.query(Message).filter_by(id=mess_id, own_user=userid)
+        .update(values))
+    current_app.dbsess.commit()
+    return output()
 
 @main.route('/ping', methods=['GET'])
 def get_ping():

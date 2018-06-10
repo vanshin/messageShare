@@ -8,12 +8,15 @@ import flask
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
 
+from functools import wraps
+
 from altools.base.error import UserExcp
 from utils.constants import UserConst
 from .runtime import userapi_cli
 
 def check_login():
     def __(func):
+        @wraps(func)
         def _(*args, **kwargs):
             cookies = flask.request.cookies
             log.info('dfdfdfdf')
