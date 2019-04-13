@@ -145,3 +145,17 @@ def put_message():
 def get_ping():
     '''ping'''
     return output()
+
+from base.handler import BaseView
+
+class Message(BaseView):
+
+    async def get(self):
+
+        self.args_idft = {
+            'int': ['type']
+        }
+
+        v = self.build_args(dtype='json', dofor='page')
+
+
